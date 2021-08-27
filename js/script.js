@@ -6,43 +6,34 @@ const getMinute = txt => {
   return `${splitArr[0]}:${splitArr[1]}`;
 }
 
+const rankLen = 15;
+const pickupChatLen = 3;
+
 let timelineLi = {};
 let cnt;
 
 fetch('chat.json')
   .then(res => res.json())
   .then(json => {
-    data = json;
-    json
-      .map(item => {
-        if (timelineLi[getMinute(item.time_text)]) {
-          timelineLi[getMinute(item.time_text)].push(item);
-        } else {
-          if (item.time_in_seconds >= 0) {
-            timelineLi[getMinute(item.time_text)] = [];
-          }
-        }
-      })
-    ;
+    const chatArr = json;
 
-    const minChat = 5;
-    const rankLen = 15;
+    const groupLi = _.groupBy(chatArr, chat => Math.floor(chat.time_in_seconds / 60));
 
-    const hotTimeArr = _.orderBy(Object.keys(timelineLi), time => timelineLi[time].length, "desc");
-
-    const topTimeArr = hotTimeArr.filter(item => timelineLi[item].length >= minChat).slice(0, rankLen);
-
-    const selectTopChat = time => {
-      const temp = timelineLi[time].filter(item => !item.message?.match(/[草|w|ｗ]/g))
-
-      return _.orderBy(temp, item => item.message?.length).slice(0, 3)
-    }
-
-    const outputArr = topTimeArr.sort().map(time => [time + ':00', selectTopChat(time).map(item => `＼${item.message}／`).join(" ")].join(" "))
+    const hotGroupArr = _(groupLi).orderBy("length", "desc").take(rankLen).orderBy(group => group[0].time_in_seconds).value();
 
     document.body.innerHTML += "🙌盛り上がったタイミング一覧<br>";
 
-    document.body.innerHTML += (outputArr.join('<br>'));
+    hotGroupArr.forEach((hotGroup, _i) => {
+      const messageArrayFilter = arr => {
+        return _(arr).filter(item => item.message != null).filter(item => !item.message?.match(/[w|ｗ|草|:]/g)).orderBy("length").take(pickupChatLen).value();
+      }
+
+      const hotTime = hotGroup[0].time_text;
+
+      const hotGroupItm = messageArrayFilter(hotGroup).map(item => `＼${item.message}／`).join(" ");
+
+      document.body.innerHTML += `${hotTime} ${hotGroupItm}<br>`;
+    })
 
     // スパチャの取得
     scArr = json
@@ -50,7 +41,7 @@ fetch('chat.json')
       .map((item, index) => `${item.time_text} ${item.author.name}さん ${item.money.text}`)
     ;
 
-    document.body.innerHTML += "<br><br>🎁スパチャを送られた皆さん<br>";
+    document.body.innerHTML += "<br>🎁スパチャを送られた皆さん<br>";
 
     document.body.innerHTML += scArr.join("<br>");
 
