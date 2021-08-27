@@ -30,9 +30,11 @@ fetch('chat.json')
 
       const hotTime = hotGroup[0].time_text;
 
+      const commentLen = hotGroup.length;
+
       const hotGroupItm = messageArrayFilter(hotGroup).map(item => `＼${item.message}／`).join(" ");
 
-      document.body.innerHTML += `${hotTime} ${hotGroupItm}<br>`;
+      document.body.innerHTML += `${hotTime} ${hotGroupItm} ✨${commentLen}コメ<br>`;
     })
 
     // スパチャの取得
