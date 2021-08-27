@@ -6,7 +6,7 @@ const getMinute = txt => {
   return `${splitArr[0]}:${splitArr[1]}`;
 }
 
-const rankLen = 15;
+const rankLen = 25;
 const pickupChatLen = 3;
 
 let timelineLi = {};
