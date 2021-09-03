@@ -1,3 +1,5 @@
+import { PythonShell } from "python-shell";
+
 const minuteSet = new Set();
 
 const getMinute = txt => {
@@ -11,6 +13,12 @@ const pickupChatLen = 3;
 
 let timelineLi = {};
 let cnt;
+
+PythonShell.runString('x=1+1;print(x)', null, function (err,data) {
+  if (err) throw err;
+  console.log(data)
+  console.log('finished');
+});
 
 fetch('chat.json')
   .then(res => res.json())
@@ -34,7 +42,7 @@ fetch('chat.json')
 
       const hotGroupItm = messageArrayFilter(hotGroup).map(item => `＼${item.message}／`).join(" ");
 
-      document.body.innerHTML += `${hotTime} ${hotGroupItm} ✨${commentLen}コメ<br>`;
+      document.body.innerHTML += `${hotTime} ${hotGroupItm} 他${commentLen - 3}コメ<br>`;
     })
 
     // スパチャの取得
@@ -47,6 +55,6 @@ fetch('chat.json')
 
     document.body.innerHTML += scArr.join("<br>");
 
-    document.body.innerHTML += "<br><br>※ このコメントはYouTubeのチャットを解析した自動生成プログラムとなります。感想・要望・問題点あれば返信ください。";
+    document.body.innerHTML += "<br><br>※ このコメントはYouTubeのチャットを解析するプログラムによる自動生成コメントとなります。感想・要望・問題点あれば返信ください。";
   })
 ;
