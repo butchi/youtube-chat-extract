@@ -1,4 +1,4 @@
-import { PythonShell } from "python-shell";
+import { PythonShell } from "/node_modules/python-shell";
 
 const minuteSet = new Set();
 
