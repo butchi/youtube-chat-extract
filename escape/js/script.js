@@ -1,24 +1,5 @@
-import { PythonShell } from "/node_modules/python-shell";
-
-const minuteSet = new Set();
-
-const getMinute = txt => {
-  const splitArr = txt.split(':');
-
-  return `${splitArr[0]}:${splitArr[1]}`;
-}
-
 const rankLen = 25;
 const pickupChatLen = 3;
-
-let timelineLi = {};
-let cnt;
-
-PythonShell.runString('x=1+1;print(x)', null, function (err,data) {
-  if (err) throw err;
-  console.log(data)
-  console.log('finished');
-});
 
 fetch('chat.json')
   .then(res => res.json())
@@ -34,7 +15,7 @@ fetch('chat.json')
     hotGroupArr.forEach((hotGroup, _i) => {
       const messageArrayFilter = arr => {
         return _(arr).filter(item => item.message != null).filter(item => !item.message?.match(/[w|ｗ|草|:]/g)).orderBy("length").take(pickupChatLen).value();
-      }
+      };
 
       const hotTime = hotGroup[0].time_text;
 
@@ -43,10 +24,10 @@ fetch('chat.json')
       const hotGroupItm = messageArrayFilter(hotGroup).map(item => `＼${item.message}／`).join(" ");
 
       document.body.innerHTML += `${hotTime} ${hotGroupItm} 他${commentLen - 3}コメ<br>`;
-    })
+    });
 
     // スパチャの取得
-    scArr = json
+    const scArr = json
       .filter(item => item.money != null)
       .map((item, index) => `${item.time_text} ${item.author.name}さん ${item.money.text}`)
     ;
