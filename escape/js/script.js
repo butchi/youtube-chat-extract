@@ -12,9 +12,9 @@ fetch('chat.json')
 
     document.body.innerHTML += "🙌盛り上がったタイミング一覧<br>";
 
-    hotGroupArr.forEach((hotGroup, _i) => {
+    hotGroupArr.forEach((hotGroup) => {
       const messageArrayFilter = arr => {
-        return _(arr).filter(item => item.message != null).filter(item => !item.message?.match(/[w|ｗ|草|:]/g)).orderBy("length").take(pickupChatLen).value();
+        return _(arr).filter(item => item.message != null).filter(item => !item.message?.match(/[w|ｗ|草|:]/g)).filter(item => item.message.length > 5).orderBy(item => item.message.length).take(pickupChatLen).value();
       };
 
       const hotTime = hotGroup[0].time_text;
@@ -23,13 +23,13 @@ fetch('chat.json')
 
       const hotGroupItm = messageArrayFilter(hotGroup).map(item => `＼${item.message}／`).join(" ");
 
-      document.body.innerHTML += `${hotTime} ${hotGroupItm} 他${commentLen - 3}コメ<br>`;
+      document.body.innerHTML += `${hotTime} ${hotGroupItm} 他${commentLen - pickupChatLen}コメ<br>`;
     });
 
     // スパチャの取得
     const scArr = json
       .filter(item => item.money != null)
-      .map((item, index) => `${item.time_text} ${item.author.name}さん ${item.money.text}`)
+      .map(item => `${item.time_text} ${item.author.name}さん ${item.money.text}`)
     ;
 
     document.body.innerHTML += "<br>🎁スパチャを送られた皆さん<br>";
